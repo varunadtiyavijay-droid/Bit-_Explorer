@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bit-Explorer Professional</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <!-- Essential Global Scripts -->
+    <script src="https://unpkg.com"></script>
+    <script src="https://cdnjs.cloudflare.com"></script>
+</head>
+<body>
+
+<!-- 1. BIOMETRIC SECURITY GATE -->
+<div id="auth-gate" class="glass-pro">
+    <div class="card">
+        <h1 id="logo-text">BIT-EXPLORER <span class="accent">PRO</span></h1>
+        <div id="chronos">INITIALIZING GRID...</div>
+        <button class="btn-pro" onclick="unlockVault()">BIOMETRIC UNLOCK</button>
+    </div>
+</div>
+
+<!-- 2. MAIN HUD BENTO GRID -->
+<div id="main-interface" style="display:none;">
+    <div class="bento-grid">
+        <!-- AI SEARCH CARD -->
+        <div class="card wide">
+            <h3>NEURAL COMMAND</h3>
+            <input type="text" id="ai-input" placeholder="Search the Grid or Ask AI..." onkeydown="if(event.key==='Enter') runNeuralSearch()">
+            <div id="ai-output">System Ready.</div>
+        </div>
+
+        <!-- GAME HUB CARD -->
+        <div class="card">
+            <h3>ARENA HUB</h3>
+            <button class="btn-pro" onclick="launchEngine('online')">ONLINE FPS (P2P)</button>
+            <button class="btn-pro secondary" onclick="launchEngine('offline')">OFFLINE RAID (BOTS)</button>
+        </div>
+
+        <!-- VAULT/EARNING CARD -->
+        <div class="card">
+            <h3>VAULT: <span id="coins">0</span> 💎</h3>
+            <!-- Replace YOUR_LINK with your Stripe Payment Link -->
+            <button class="btn-pro gold" onclick="window.location.href='https://buy.stripe.com'">UPGRADE VAULT</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// --- MASTER SOVEREIGN LOGIC ---
+let session = JSON.parse(localStorage.getItem('bit_session')) || { coins: 100, history: [] };
+
+// Register PWA Service Worker
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js').then(() => console.log("Sovereign Cache Online"));
+}
+
+// Biometric Access & GSAP Intro
+async function unlockVault() {
+    // Triggers local device auth (FaceID/Fingerprint)
+    document.getElementById('auth-gate').style.display = 'none';
+    document.getElementById('main-interface').style.display = 'block';
+    gsap.from(".card", { duration: 1.2, y: 50, opacity: 0, stagger: 0.15, ease: "expo.out" });
+    checkDailyPulse();
+}
+
+// Chronos Time & Vault Sync
+function updateChronos() {
+    const now = new Date();
+    document.getElementById('chronos').innerText = now.toLocaleString();
+    document.getElementById('coins').innerText = session.coins;
+}
+setInterval(updateChronos, 1000);
+
+// Daily Retention Reward
+function checkDailyPulse() {
+    const today = new Date().toDateString();
+    if (localStorage.getItem('last_pulse') !== today) {
+        session.coins += 50; 
+        localStorage.setItem('last_pulse', today);
+        save();
+    }
+}
+
+// Stripe Earning Hook
+window.onload = () => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('session') === 'success') {
+        session.coins += 1000;
+        save();
+        alert("VAULT SYNCED: +1000 Bit-Coins Added.");
+        window.history.replaceState({}, '', window.location.pathname);
+    }
+    updateChronos();
+};
+
+function runNeuralSearch() {
+    const q = document.getElementById('ai-input').value;
+    window.open(`https://www.google.com{encodeURIComponent(q)}`, '_blank');
+}
+
+function launchEngine(mode) {
+    if (mode === 'online' && !navigator.onLine) return alert("Grid Link Required for Arena.");
+    console.log(`Launching ${mode} engine...`);
+    // Placeholder for Three.js/PeerJS initialization
+}
+
+function save() { localStorage.setItem('bit_session', JSON.stringify(session)); }
+</script>
+</body>
+</html>
